@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roll CTF Challenge</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin: 50px;
+            perspective: 1000px;
+            height: 200px;
+        }
+
+        .dice {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 0.6s ease-out;
+            will-change: transform;
+        }
+
+        .face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #dc2626;
+            border: 2px solid #991b1b;
+            display: grid;
+            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            backface-visibility: hidden;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: #000;
+            border-radius: 50%;
+            align-self: center;
+            justify-self: center;
+        }
+
+        /* Dot Layouts */
+        .one .dot { grid-area: 2 / 2; }
+
+        .two .dot:nth-child(1) { grid-area: 1 / 1; }
+        .two .dot:nth-child(2) { grid-area: 3 / 3; }
+
+        .three .dot:nth-child(1) { grid-area: 1 / 1; }
+        .three .dot:nth-child(2) { grid-area: 2 / 2; }
+        .three .dot:nth-child(3) { grid-area: 3 / 3; }
+
+        .four .dot:nth-child(1) { grid-area: 1 / 1; }
+        .four .dot:nth-child(2) { grid-area: 1 / 3; }
+        .four .dot:nth-child(3) { grid-area: 3 / 1; }
+        .four .dot:nth-child(4) { grid-area: 3 / 3; }
+
+        .five .dot:nth-child(1) { grid-area: 1 / 1; }
+        .five .dot:nth-child(2) { grid-area: 1 / 3; }
+        .five .dot:nth-child(3) { grid-area: 2 / 2; }
+        .five .dot:nth-child(4) { grid-area: 3 / 1; }
+        .five .dot:nth-child(5) { grid-area: 3 / 3; }
+
+        .six .dot:nth-child(1) { grid-area: 1 / 1; }
+        .six .dot:nth-child(2) { grid-area: 1 / 3; }
+        .six .dot:nth-child(3) { grid-area: 2 / 1; }
+        .six .dot:nth-child(4) { grid-area: 2 / 3; }
+        .six .dot:nth-child(5) { grid-area: 3 / 1; }
+        .six .dot:nth-child(6) { grid-area: 3 / 3; }
+
+        /* Face Transformations */
+        .front  { transform: translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .shadow {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            filter: blur(5px);
+            transform: translateY(120px);
+        }
+    </style>
+</head>
+<body>
+    <h1>Roll the Dice!</h1>
+    <p>Both dice must land on 6 to get the flag.</p>
+    <div class="dice-container">
+        <div class="shadow"></div>
+        <div class="dice" id="dice1">
+            <div class="face front one">
+                <span class="dot"></span>
+            </div>
+            <div class="face back six">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="face right three">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="face left four">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="face top five">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="face bottom two">
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+        <div class="shadow"></div>
+        <div class="dice" id="dice2">
+            <div class="face front one">
+                <span class="dot"></span>
+            </div>
+            <div class="face back six">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="face right three">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="face left four">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="face top five">
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+            <div class="face bottom two">
+                <span class="dot"></span><span class="dot"></span>
+            </div>
+        </div>
+    </div>
+    <button onclick="rollDice()">Roll Dice</button>
+    <p id="flag" class="hidden">🎉 Congratulations! Here is your flag: FLAG{YOU_CRACKED_IT} 🎉</p>
+
+    <script>
+        function rollDice() {
+            const dice1 = document.getElementById("dice1");
+            const dice2 = document.getElementById("dice2");
+            
+            const rotations = [
+                {x: 0, y: 0},      // 1
+                {x: -90, y: 0},    // 2
+                {x: 0, y: -90},    // 3
+                {x: 0, y: 90},     // 4
+                {x: 90, y: 0},     // 5
+                {x: 180, y: 0}     // 6
+            ];
+            
+            // Ensure we never get 6,6 by normal rolls
+            let num1 = Math.floor(Math.random() * 5); // 0-4
+            let num2 = Math.floor(Math.random() * 5); // 0-4
+            
+            // Make sure at least one die is not 5 (which would be 6 after adding 1)
+            if (num1 === 4 && num2 === 4) {
+                num2 = Math.floor(Math.random() * 4); // 0-3
+            }
+            
+            const spinX = Math.floor(Math.random() * 2) * 360;
+            const spinY = Math.floor(Math.random() * 2) * 360;
+            
+            dice1.style.transform = `rotateX(${rotations[num1].x + spinX}deg) rotateY(${rotations[num1].y + spinY}deg)`;
+            dice2.style.transform = `rotateX(${rotations[num2].x + spinX}deg) rotateY(${rotations[num2].y + spinY}deg)`;
+            
+            setTimeout(() => {
+                winGame(num1 + 1, num2 + 1);
+            }, 600);
+        }
+
+        function winGame(d1, d2) {
+            if (d1 === 6 && d2 === 6) {
+                document.getElementById("flag").classList.remove("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
